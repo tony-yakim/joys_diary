@@ -533,6 +533,26 @@ header::before {
   margin-top: 6px;
 }
 
+.info-figure {
+  margin: 4px 18px 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-figure img {
+  width: 100%;
+  border-radius: 12px;
+  display: block;
+  background: var(--color-bg);
+}
+
+.info-figure figcaption {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  margin-top: 6px;
+}
+
 /* ─── Tablet breakpoint ──────────────────── */
 
 @media (min-width: 768px) {
