@@ -11,9 +11,39 @@
   --color-border: #EDE0D4;
   --color-done: #6BBF6B;
   --color-tab-bar: #FFFFFF;
+  --color-emergency-bg: #FFF1EC;
+  --color-emergency-border: #F2B79A;
+  --color-emergency-title: #B14A1A;
+  --color-tablet-bg: #F0E8E0;
+  --color-overlay: rgba(20, 70, 61, 0.85);
+  --color-overlay-thanks: rgba(20, 70, 61, 0.88);
   --radius: 14px;
   --shadow: 0 2px 12px rgba(0,0,0,0.08);
   --sticky-progress-h: 88px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: #F09659;
+    --color-primary-dark: #D87A3D;
+    --color-primary-light: #F5B689;
+    --color-header-top: #1F4438;
+    --color-header-bottom: #0A2520;
+    --color-bg: #1A1410;
+    --color-surface: #26201B;
+    --color-text: #F2E8DC;
+    --color-text-muted: #A89687;
+    --color-border: #3A2F26;
+    --color-done: #5FA85F;
+    --color-tab-bar: #26201B;
+    --color-emergency-bg: #3A2520;
+    --color-emergency-border: #6B3F2A;
+    --color-emergency-title: #F2A87A;
+    --color-tablet-bg: #0E0A07;
+    --color-overlay: rgba(0, 0, 0, 0.75);
+    --color-overlay-thanks: rgba(0, 0, 0, 0.8);
+    --shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
 }
 
 * {
@@ -334,8 +364,8 @@ header::before {
 /* ─── Emergency contacts ─────────────────── */
 
 .emergency-card {
-  background: #FFF1EC;
-  border: 1.5px solid #F2B79A;
+  background: var(--color-emergency-bg);
+  border: 1.5px solid var(--color-emergency-border);
   border-radius: var(--radius);
   padding: 14px 16px;
   margin-bottom: 18px;
@@ -344,7 +374,7 @@ header::before {
 .emergency-title {
   font-weight: 700;
   font-size: 14px;
-  color: #B14A1A;
+  color: var(--color-emergency-title);
   text-transform: uppercase;
   letter-spacing: 0.6px;
   margin-bottom: 10px;
@@ -385,7 +415,7 @@ header::before {
 }
 
 .emergency-vet {
-  border-top: 1px solid #F2B79A;
+  border-top: 1px solid var(--color-emergency-border);
   padding-top: 10px;
   margin-top: 4px;
 }
@@ -529,7 +559,7 @@ header::before {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(20, 70, 61, 0.85);
+  background: var(--color-overlay);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   display: flex;
@@ -697,7 +727,7 @@ header::before {
   position: fixed;
   inset: 0;
   z-index: 1100;
-  background: rgba(20, 70, 61, 0.88);
+  background: var(--color-overlay-thanks);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -862,7 +892,7 @@ header::before {
   body {
     display: flex;
     justify-content: center;
-    background: #F0E8E0;
+    background: var(--color-tablet-bg);
   }
 
   .card { padding: 18px 20px; }
