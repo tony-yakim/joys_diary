@@ -20,33 +20,43 @@ const SCHEDULE = [
 ];
 
 export default async function handler(req, res) {
-  // Protect endpoint with a secret so only your cron service can trigger it.
   if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const sub = await kv.get('primary');
-  if (!sub) return res.status(200).json({ skipped: 'no subscription' });
+  const subs = (await kv.get('subs')) || [];
+  if (subs.length === 0) return res.status(200).json({ skipped: 'no subscriptions' });
 
   const fmt = new Intl.DateTimeFormat('en-GB', {
     timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false,
   });
   const nowHHMM = fmt.format(new Date());
   const due = SCHEDULE.filter(i => i.time === nowHHMM);
+  if (due.length === 0) return res.status(200).json({ time: nowHHMM, sent: 0, results: [] });
 
+  const stillValid = [];
   const results = [];
-  for (const item of due) {
-    try {
-      const r = await sendWebPush(sub, {
-        title: `${item.emoji} ${item.label}`,
-        body:  item.meta,
-        tag:   item.id,
-      });
-      results.push({ id: item.id, status: r.status });
-    } catch (err) {
-      results.push({ id: item.id, error: err.message });
+  for (const sub of subs) {
+    let keep = true;
+    for (const item of due) {
+      try {
+        const r = await sendWebPush(sub, {
+          title: `${item.emoji} ${item.label}`,
+          body:  item.meta,
+          tag:   item.id,
+        });
+        results.push({ id: item.id, status: r.status });
+        if (r.status === 404 || r.status === 410) keep = false;
+      } catch (err) {
+        results.push({ id: item.id, error: err.message });
+      }
     }
+    if (keep) stillValid.push(sub);
   }
 
-  res.status(200).json({ time: nowHHMM, sent: results.length, results });
+  if (stillValid.length !== subs.length) {
+    await kv.set('subs', stillValid);
+  }
+
+  res.status(200).json({ time: nowHHMM, devices: subs.length, kept: stillValid.length, results });
 }

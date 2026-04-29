@@ -6,14 +6,29 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const sub = await kv.get('primary');
-  if (!sub) return res.status(404).json({ error: 'No subscription saved' });
+  const subs = (await kv.get('subs')) || [];
+  if (subs.length === 0) return res.status(404).json({ error: 'No subscriptions saved' });
 
-  const r = await sendWebPush(sub, {
-    title: '🐾 Test from Joy\'s Diary',
-    body:  'Push notifications are working!',
-    tag:   'test',
-  });
+  const stillValid = [];
+  const results = [];
+  for (const sub of subs) {
+    try {
+      const r = await sendWebPush(sub, {
+        title: '🐾 Test from Joy\'s Diary',
+        body:  'Push notifications are working!',
+        tag:   'test',
+      });
+      results.push({ status: r.status });
+      if (r.status !== 404 && r.status !== 410) stillValid.push(sub);
+    } catch (err) {
+      results.push({ error: err.message });
+      stillValid.push(sub);
+    }
+  }
 
-  res.status(200).json({ status: r.status });
+  if (stillValid.length !== subs.length) {
+    await kv.set('subs', stillValid);
+  }
+
+  res.status(200).json({ devices: subs.length, kept: stillValid.length, results });
 }
