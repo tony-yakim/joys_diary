@@ -1,0 +1,12 @@
+name = "joys-diary-push"
+main = "src/index.js"
+compatibility_date = "2025-04-01"
+
+# Fill in the id from `npx wrangler kv namespace create JOY_SUBS`
+[[kv_namespaces]]
+binding = "JOY_SUBS"
+id = ""
+
+# Cron: fire every minute, UTC. Worker converts to Europe/Madrid for matching.
+[triggers]
+crons = ["* * * * *"]

@@ -1,4 +1,4 @@
-const CACHE = 'joys-diary-v1';
+const CACHE = 'joys-diary-v3';
 const ASSETS = [
   '/',
   '/index.html',
@@ -29,6 +29,29 @@ self.addEventListener('fetch', e => {
   );
 });
 
-// Future upgrade: add push event handler here for true background notifications
-// using a VAPID server (e.g. free Cloudflare Worker).
-// self.addEventListener('push', e => { ... });
+// ─── Web Push ────────────────────────────────────────────────────────────────
+
+self.addEventListener('push', e => {
+  let data = {};
+  try { data = e.data ? e.data.json() : {}; } catch { /* non-JSON payload */ }
+  const title = data.title || '🐾 Joy\'s Diary';
+  const opts = {
+    body:  data.body  || '',
+    icon:  '/icons/icon-192.png',
+    badge: '/icons/icon-192.png',
+    tag:   data.tag   || 'joy',
+    data,
+  };
+  e.waitUntil(self.registration.showNotification(title, opts));
+});
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
+      const existing = clients.find(c => 'focus' in c);
+      if (existing) return existing.focus();
+      return self.clients.openWindow('/');
+    })
+  );
+});
