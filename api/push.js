@@ -11,7 +11,7 @@ const SCHEDULE = [
   { id: 'f5', label: 'Afternoon water refill',               time: '15:00', emoji: '💧', meta: 'Second refill of the day' },
   { id: 'w1', label: 'Morning walk',                         time: '08:30', emoji: '🦮', meta: '10–15 min hygiene walk' },
   { id: 'w2', label: 'Afternoon walk',                       time: '16:30', emoji: '🦮', meta: '30+ min · bring treats (up to 10 pcs)' },
-  { id: 'w3', label: 'Evening walk',                         time: '21:00', emoji: '🦮', meta: '10–15 min hygiene walk before bedtime' },
+  { id: 'w3', label: 'Evening walk',                         time: '21:40', emoji: '🦮', meta: '10–15 min hygiene walk before bedtime' },
   { id: 'r1', label: 'After morning walk: paws + harness',   time: '09:00', emoji: '🐾', meta: 'Wipe paws · remove harness' },
   { id: 'r2', label: 'After afternoon walk: paws + harness', time: '17:30', emoji: '🐾', meta: 'Wipe paws · remove harness' },
   { id: 'r3', label: 'After evening walk: paws + harness',   time: '21:45', emoji: '🐾', meta: 'Wipe paws · remove harness' },
