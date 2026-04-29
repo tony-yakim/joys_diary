@@ -1,5 +1,4 @@
 // ─── Config ──────────────────────────────────────────────────────────────────
-// Paste these after deploying the Cloudflare Worker.
 
 const VAPID_PUBLIC_KEY = 'BGT2JpPfd8prxgKpFS44m1Jd_HkPk0177eaOs1ekuUsjDcOPT2d-pNyPb1ey0m_TSKvXKBKENDZ46CRmLlm1lGI';
 const API_URL          = 'https://joys-diary.vercel.app';
@@ -8,8 +7,7 @@ const API_URL          = 'https://joys-diary.vercel.app';
 
 const DOG = {
   name: 'Joy',
-  breed: 'Golden Retriever',
-  age: '2 years',
+  age:  '3 years',
 };
 
 // ─── Schedule ─────────────────────────────────────────────────────────────────
@@ -23,16 +21,13 @@ const SCHEDULE = {
     { id: 'f5', label: 'Afternoon water refill', time: '15:00', emoji: '💧', meta: 'Second refill of the day' },
   ],
   walks: [
-    { id: 'w1', label: 'Morning walk',   time: '08:30', emoji: '🦮', meta: '10–15 min hygiene walk' },
-    { id: 'w2', label: 'Afternoon walk', time: '16:30', emoji: '🦮', meta: '30+ min · bring treats (up to 10 pcs)' },
-    { id: 'w3', label: 'Evening walk',   time: '21:00', emoji: '🦮', meta: '10–15 min hygiene walk before bedtime' },
+    { id: 'w1', label: 'Morning walk',   time: '08:30', emoji: '🦮', meta: '10–15 min hygiene walk',                       subtitle: 'After: wipe paws · remove harness' },
+    { id: 'w2', label: 'Afternoon walk', time: '16:30', emoji: '🦮', meta: '30+ min · bring treats (up to 10 pcs)',        subtitle: 'After: wipe paws · remove harness' },
+    { id: 'w3', label: 'Evening walk',   time: '21:00', emoji: '🦮', meta: '10–15 min hygiene walk before bedtime',        subtitle: 'After: wipe paws · remove harness' },
   ],
   reminders: [
-    { id: 'r1', label: 'After morning walk: paws + harness',   time: '09:00', emoji: '🐾', meta: 'Wipe paws · remove harness' },
-    { id: 'r2', label: 'After afternoon walk: paws + harness', time: '17:30', emoji: '🐾', meta: 'Wipe paws · remove harness' },
-    { id: 'r3', label: 'After evening walk: paws + harness',   time: '21:45', emoji: '🐾', meta: 'Wipe paws · remove harness' },
-    { id: 'r4', label: 'Wash Joy\'s bowl',                     time: '20:45', emoji: '🫧', meta: 'After dinner — brush + boiling water (no detergent)' },
-    { id: 'r5', label: 'Chewing stick',                        time: '17:00', emoji: '🦴', meta: 'Once every 1–2 days' },
+    { id: 'r4', label: "Wash Joy's bowl", time: '20:45', emoji: '🫧', meta: 'After dinner — brush + boiling water (no detergent)' },
+    { id: 'r5', label: 'Chewing stick',   time: '17:00', emoji: '🦴', meta: 'Once every 1–2 days' },
   ],
 };
 
@@ -90,7 +85,7 @@ async function subscribeToPush() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(sub),
     });
-    if (!res.ok) throw new Error('Worker rejected subscription: ' + res.status);
+    if (!res.ok) throw new Error('API rejected subscription: ' + res.status);
     console.log('Subscribed to push notifications.');
   } catch (err) {
     console.error('Push subscription failed:', err);
@@ -148,6 +143,7 @@ function buildCard(item, doneIds) {
     <div class="card-emoji">${item.emoji}</div>
     <div class="card-body">
       <div class="card-label">${item.label}</div>
+      ${item.subtitle ? `<div class="card-subtitle">${item.subtitle}</div>` : ''}
       <div class="card-meta">${item.time}${item.meta ? ' · ' + item.meta : ''}</div>
     </div>
     <div class="card-actions">
@@ -165,25 +161,53 @@ function buildCard(item, doneIds) {
   return card;
 }
 
-function renderSection(tabName) {
-  const items   = SCHEDULE[tabName];
+function buildDivider(label) {
+  const el = document.createElement('div');
+  el.className = 'timeline-divider';
+  el.textContent = label;
+  return el;
+}
+
+function timeOfDay(timeStr) {
+  const h = parseInt(timeStr.slice(0, 2), 10);
+  if (h < 12) return 'morning';
+  if (h < 17) return 'afternoon';
+  return 'evening';
+}
+
+const DIVIDER_LABELS = {
+  morning:   '☀️ Morning',
+  afternoon: '🌤 Afternoon',
+  evening:   '🌙 Evening',
+};
+
+function renderTimeline() {
+  const container = document.getElementById('timeline');
+  container.innerHTML = '';
+  const items = [...SCHEDULE.feeding, ...SCHEDULE.walks, ...SCHEDULE.reminders]
+    .sort((a, b) => a.time.localeCompare(b.time));
   const doneIds = getDoneIds();
-  const list    = document.getElementById('list-' + tabName);
-  list.innerHTML = '';
-  items.forEach(item => list.appendChild(buildCard(item, doneIds)));
+
+  let lastBucket = null;
+  for (const item of items) {
+    const bucket = timeOfDay(item.time);
+    if (bucket !== lastBucket) {
+      container.appendChild(buildDivider(DIVIDER_LABELS[bucket]));
+      lastBucket = bucket;
+    }
+    container.appendChild(buildCard(item, doneIds));
+  }
   updateProgress();
 }
 
 function updateProgress() {
+  const items   = [...SCHEDULE.feeding, ...SCHEDULE.walks, ...SCHEDULE.reminders];
   const doneIds = getDoneIds();
-  ['feeding', 'walks', 'reminders'].forEach(tab => {
-    const items = SCHEDULE[tab];
-    const count = items.filter(i => doneIds.includes(i.id)).length;
-    const pct   = items.length ? Math.round((count / items.length) * 100) : 0;
-    document.getElementById(tab + '-progress').style.width = pct + '%';
-    document.getElementById(tab + '-progress-label').textContent =
-      `${count} of ${items.length} done`;
-  });
+  const count   = items.filter(i => doneIds.includes(i.id)).length;
+  const pct     = items.length ? Math.round((count / items.length) * 100) : 0;
+  document.getElementById('today-progress').style.width = pct + '%';
+  document.getElementById('today-progress-label').textContent =
+    `${count} of ${items.length} done`;
 }
 
 // ─── Tab switching ────────────────────────────────────────────────────────────
@@ -203,9 +227,7 @@ function initTabs() {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-  renderSection('feeding');
-  renderSection('walks');
-  renderSection('reminders');
+  renderTimeline();
   initTabs();
   initNotifBanner();
 });

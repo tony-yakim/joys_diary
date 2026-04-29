@@ -25,7 +25,7 @@
         <div class="dog-avatar"><img src="/icons/joy.jpg" alt="Joy" /></div>
         <div class="dog-info">
           <h1>Joy's Diary</h1>
-          <p>Golden Retriever · 2 years old</p>
+          <p>Good Girl · 3 years old</p>
         </div>
       </div>
     </header>
@@ -37,51 +37,112 @@
 
     <div id="content">
 
-      <!-- Feeding tab -->
-      <section id="section-feeding" class="section active">
-        <p class="section-title">Today's feeding</p>
+      <!-- Today timeline -->
+      <section id="section-today" class="section active">
+        <p class="section-title">Today</p>
         <div class="progress-bar-wrap">
-          <div class="progress-bar" id="feeding-progress" style="width:0%"></div>
+          <div class="progress-bar" id="today-progress" style="width:0%"></div>
         </div>
-        <p class="progress-label" id="feeding-progress-label">0 of 5 done</p>
-        <div class="schedule-list" id="list-feeding"></div>
+        <p class="progress-label" id="today-progress-label">0 of 10 done</p>
+        <div class="timeline" id="timeline"></div>
       </section>
 
-      <!-- Walks tab -->
-      <section id="section-walks" class="section">
-        <p class="section-title">Today's walks</p>
-        <div class="progress-bar-wrap">
-          <div class="progress-bar" id="walks-progress" style="width:0%"></div>
-        </div>
-        <p class="progress-label" id="walks-progress-label">0 of 3 done</p>
+      <!-- About Joy -->
+      <section id="section-info" class="section">
+        <p class="section-title">About Joy</p>
 
-        <div class="schedule-list" id="list-walks"></div>
-      </section>
+        <details class="info-section">
+          <summary>❗️ The basics</summary>
+          <ul>
+            <li>When you leave the house, don't leave any food or valuable items within reach (dining, work, coffee tables).</li>
+            <li>When you leave the house, close all room doors.</li>
+            <li>After a walk, take off her harness.</li>
+            <li>Joy is allowed everywhere except the bed (though she may still climb on it, mostly in winter 😅).</li>
+          </ul>
+        </details>
 
-      <!-- Reminders tab -->
-      <section id="section-reminders" class="section">
-        <p class="section-title">Today's reminders</p>
-        <div class="progress-bar-wrap">
-          <div class="progress-bar" id="reminders-progress" style="width:0%"></div>
-        </div>
-        <p class="progress-label" id="reminders-progress-label">0 of 5 done</p>
-        <div class="schedule-list" id="list-reminders"></div>
+        <details class="info-section">
+          <summary>💛 Personality</summary>
+          <ul>
+            <li>She sleeps quite a lot during the day — around 12–14 hours.</li>
+            <li>It's better not to disturb her when she is resting or sleeping.</li>
+            <li>Her activity level increases after walks; she'll bring you her toys.</li>
+            <li>Talk to her — she understands a lot. We mix Ukrainian and English; she pays attention to intonation.</li>
+            <li>She likes laying on the balcony for short sessions (it gets too hot).</li>
+            <li>She can be protective of her food and space — sometimes growls or barks. Don't take it personally; she won't bite. She was the smallest of her litter and had to "conquer" food from her siblings.</li>
+          </ul>
+        </details>
+
+        <details class="info-section">
+          <summary>🍽 Feeding</summary>
+          <ul>
+            <li>💧 Always keep water in her bowl. Rinse and refill 1–2 times a day.</li>
+            <li>🍖 All dog food is stored in the cupboard under the sink (a little to the right). Salmon oil and opened wet food go in the fridge.</li>
+            <li>Daily totals: <strong>90 g dry food</strong> + <strong>50–60 g wet food</strong>.</li>
+            <li>Use her special spoon (rubber-wrapped, kept near the sink) to serve wet food.</li>
+            <li>Wash her bowl after every meal with the dedicated brush. Once a day after dinner, pour boiling water over it (no detergent, just water + brush).</li>
+            <li>Chewing sticks: once every 1–2 days (same cupboard).</li>
+            <li>Walking treats are kept near the entrance, top shelf.</li>
+          </ul>
+        </details>
+
+        <details class="info-section">
+          <summary>📍 Walks</summary>
+          <ul>
+            <li>❗️ Don't let her pick anything off the ground — she may try to grab food or trash. Be especially attentive near benches and picnic areas.</li>
+            <li>Out our building, go right toward Turia park (we try to avoid too many steps).</li>
+            <li>For walks longer than 30 min, bring water — there are fountains in the park (silicone bowl is near the entrance).</li>
+            <li>Up to 10 treats per walk from the pouch.</li>
+            <li>Give her time to sniff — bushes, trees, etc.</li>
+            <li>She walks well on leash and enjoys off-leash time in safe spots (only if you're confident).</li>
+            <li>She loves sticks — she'll bring a good one back to you many times.</li>
+            <li>She can be triggered by sudden loud sounds and movements (running children, motorcycles). Cross the street and redirect her with voice + treats.</li>
+            <li>Sometimes she stops and refuses to walk — gently pull the leash in the right direction.</li>
+            <li>After every walk, wipe her paws (wipes are on the shoe shelf), even short ones.</li>
+          </ul>
+        </details>
+
+        <details class="info-section">
+          <summary>🏠 When alone at home</summary>
+          <ul>
+            <li>She may "misbehave" a little — lately she sometimes gets into the dry trash bin.</li>
+            <li>Trash with food leftovers should always go in the mixed-waste bin (the big one).</li>
+            <li>When you leave, you can put the smaller trash bin on the balcony.</li>
+          </ul>
+        </details>
+
+        <details class="info-section">
+          <summary>🐾 Commands she knows</summary>
+          <ul>
+            <li><strong>Stop / no ("fu")</strong> — she knows them, but doesn't always listen 😉</li>
+            <li><strong>Drop</strong> — spit it out</li>
+            <li><strong>Come</strong> — come to me</li>
+            <li><strong>Sit</strong></li>
+            <li><strong>Sit pretty</strong></li>
+            <li><strong>Middle</strong> — stand between the legs</li>
+            <li><strong>Spin</strong></li>
+            <li><strong>Yoga</strong></li>
+            <li><strong>Down</strong></li>
+            <li><strong>Shake</strong> — give paw</li>
+            <li><strong>Shake left</strong> — the other paw</li>
+            <li><strong>On / off</strong> — jump on / off something</li>
+            <li><strong>Place</strong> — go to her bed or sofa blanket</li>
+          </ul>
+          <p class="info-note">She'll do all of them for treats.</p>
+        </details>
+
       </section>
 
     </div><!-- #content -->
 
     <nav id="tab-bar">
-      <button class="tab-btn active" data-tab="feeding">
-        <span class="tab-icon">🍖</span>
-        Feeding
+      <button class="tab-btn active" data-tab="today">
+        <span class="tab-icon">📅</span>
+        Today
       </button>
-      <button class="tab-btn" data-tab="walks">
-        <span class="tab-icon">🦮</span>
-        Walks
-      </button>
-      <button class="tab-btn" data-tab="reminders">
-        <span class="tab-icon">💊</span>
-        Reminders
+      <button class="tab-btn" data-tab="info">
+        <span class="tab-icon">📖</span>
+        About Joy
       </button>
     </nav>
 
