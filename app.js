@@ -239,6 +239,54 @@ function updateProgress() {
   document.getElementById('today-progress').style.width = pct + '%';
   document.getElementById('today-progress-label').textContent =
     `${count} of ${items.length} done`;
+
+  if (count === items.length && items.length > 0) {
+    maybeShowThanks(items.length);
+  }
+}
+
+// ─── Thank you overlay ────────────────────────────────────────────────────────
+
+function thanksKey() {
+  return 'joys_diary_thanks_shown_' + new Date().toISOString().slice(0, 10);
+}
+
+function wasThanksShownToday() {
+  return localStorage.getItem(thanksKey()) === '1';
+}
+
+function markThanksShownToday() {
+  localStorage.setItem(thanksKey(), '1');
+}
+
+function maybeShowThanks(totalTasks) {
+  if (wasThanksShownToday()) return;
+  const overlay = document.getElementById('thanks-overlay');
+  if (!overlay || !overlay.classList.contains('hidden')) return;
+  const body = document.getElementById('thanks-body');
+  if (body) {
+    body.textContent =
+      `All ${totalTasks} tasks done today — Joy is happy, well-fed, and loved.`;
+  }
+  overlay.classList.remove('hidden');
+  overlay.setAttribute('aria-hidden', 'false');
+  markThanksShownToday();
+}
+
+function initThanks() {
+  const overlay = document.getElementById('thanks-overlay');
+  const closeBtn = document.getElementById('thanks-close-btn');
+  if (!overlay || !closeBtn) return;
+
+  function hide() {
+    overlay.classList.add('hidden');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+
+  closeBtn.addEventListener('click', hide);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) hide();
+  });
 }
 
 // ─── Tab switching ────────────────────────────────────────────────────────────
@@ -258,6 +306,7 @@ function initTabs() {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
+  initThanks();
   renderTimeline();
   initTabs();
   initOnboarding();
