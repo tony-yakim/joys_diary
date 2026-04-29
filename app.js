@@ -92,44 +92,62 @@ async function subscribeToPush() {
   }
 }
 
-// ─── Notification permission UI ───────────────────────────────────────────────
+// ─── Onboarding overlay ───────────────────────────────────────────────────────
 
-function initNotifBanner() {
-  const banner = document.getElementById('notif-banner');
-  const btn    = document.getElementById('enable-notif-btn');
+function isInstalledPwa() {
+  return window.matchMedia('(display-mode: standalone)').matches
+      || window.navigator.standalone === true;
+}
 
-  if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
-    banner.querySelector('span').textContent =
-      'ℹ️ Push notifications need iOS 16.4+. Add to Home Screen, then reopen.';
-    btn.style.display = 'none';
-    return;
+function detectOnboardingState() {
+  if (!isInstalledPwa()) return 'install';
+  if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) return null;
+  if (Notification.permission === 'granted') return null;
+  if (Notification.permission === 'denied')  return 'blocked';
+  return 'enable';
+}
+
+function initOnboarding() {
+  const overlay = document.getElementById('onboarding-overlay');
+  const enableBtn = document.getElementById('onboarding-enable-btn');
+  const skipBtn   = document.getElementById('onboarding-skip-btn');
+
+  function hide() {
+    overlay.classList.add('hidden');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+  function show(state) {
+    overlay.dataset.state = state;
+    overlay.classList.remove('hidden');
+    overlay.setAttribute('aria-hidden', 'false');
   }
 
-  if (Notification.permission === 'granted') {
-    banner.classList.add('hidden');
+  // If notifications already granted, just (re)subscribe and don't show overlay
+  if (isInstalledPwa() && 'Notification' in window && Notification.permission === 'granted') {
     subscribeToPush();
     return;
   }
 
-  if (Notification.permission === 'denied') {
-    banner.querySelector('span').textContent =
-      '⚠️ Notifications blocked. Go to Settings → Notifications → Joy\'s Diary to enable.';
-    btn.style.display = 'none';
-    return;
-  }
+  const state = detectOnboardingState();
+  if (!state) return;
+  show(state);
 
-  btn.addEventListener('click', () => {
-    Notification.requestPermission().then(perm => {
+  enableBtn.addEventListener('click', async () => {
+    try {
+      const perm = await Notification.requestPermission();
       if (perm === 'granted') {
-        banner.classList.add('hidden');
-        subscribeToPush();
+        await subscribeToPush();
+        hide();
       } else {
-        banner.querySelector('span').textContent =
-          '⚠️ Notifications blocked. Enable them in device Settings.';
-        btn.style.display = 'none';
+        // user denied — switch overlay to blocked state
+        show('blocked');
       }
-    });
+    } catch (err) {
+      console.error('Permission request failed:', err);
+    }
   });
+
+  skipBtn.addEventListener('click', hide);
 }
 
 // ─── Render cards ─────────────────────────────────────────────────────────────
@@ -242,5 +260,5 @@ function initTabs() {
 document.addEventListener('DOMContentLoaded', () => {
   renderTimeline();
   initTabs();
-  initNotifBanner();
+  initOnboarding();
 });
