@@ -9,15 +9,19 @@ export default async function handler(req, res) {
   const subs = (await kv.get('subs')) || [];
   if (subs.length === 0) return res.status(404).json({ error: 'No subscriptions saved' });
 
+  // Optional custom payload via POST body: { title, body, tag }
+  const custom = (req.body && typeof req.body === 'object') ? req.body : {};
+  const payload = {
+    title: custom.title || '🐾 Test from Joy\'s Diary',
+    body:  custom.body  || 'Push notifications are working!',
+    tag:   custom.tag   || 'test',
+  };
+
   const stillValid = [];
   const results = [];
   for (const sub of subs) {
     try {
-      const r = await sendWebPush(sub, {
-        title: '🐾 Test from Joy\'s Diary',
-        body:  'Push notifications are working!',
-        tag:   'test',
-      });
+      const r = await sendWebPush(sub, payload);
       results.push({ status: r.status });
       if (r.status !== 404 && r.status !== 410) stillValid.push(sub);
     } catch (err) {
