@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Joy's Diary</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#E8874A" />
+
+  <!-- iOS PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Joy's Diary" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+
+    <header>
+      <div class="dog-profile">
+        <div class="dog-avatar">🐾</div>
+        <div class="dog-info">
+          <h1>Joy's Diary</h1>
+          <p>Golden Retriever · 2 years old</p>
+        </div>
+      </div>
+    </header>
+
+    <div id="notif-banner">
+      <span>Enable reminders to get notified when it's time for Joy's schedule.</span>
+      <button id="enable-notif-btn">Enable</button>
+    </div>
+
+    <div id="content">
+
+      <!-- Feeding tab -->
+      <section id="section-feeding" class="section active">
+        <p class="section-title">Today's feeding</p>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="feeding-progress" style="width:0%"></div>
+        </div>
+        <p class="progress-label" id="feeding-progress-label">0 of 5 done</p>
+        <div class="schedule-list" id="list-feeding"></div>
+      </section>
+
+      <!-- Walks tab -->
+      <section id="section-walks" class="section">
+        <p class="section-title">Today's walks</p>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="walks-progress" style="width:0%"></div>
+        </div>
+        <p class="progress-label" id="walks-progress-label">0 of 3 done</p>
+
+        <div class="schedule-list" id="list-walks"></div>
+      </section>
+
+      <!-- Reminders tab -->
+      <section id="section-reminders" class="section">
+        <p class="section-title">Today's reminders</p>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="reminders-progress" style="width:0%"></div>
+        </div>
+        <p class="progress-label" id="reminders-progress-label">0 of 5 done</p>
+        <div class="schedule-list" id="list-reminders"></div>
+      </section>
+
+    </div><!-- #content -->
+
+    <nav id="tab-bar">
+      <button class="tab-btn active" data-tab="feeding">
+        <span class="tab-icon">🍖</span>
+        Feeding
+      </button>
+      <button class="tab-btn" data-tab="walks">
+        <span class="tab-icon">🦮</span>
+        Walks
+      </button>
+      <button class="tab-btn" data-tab="reminders">
+        <span class="tab-icon">💊</span>
+        Reminders
+      </button>
+    </nav>
+
+  </div><!-- #app -->
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(console.error);
+    }
+  </script>
+</body>
+</html>
