@@ -7,11 +7,11 @@
 
   <!-- PWA -->
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#E8874A" />
+  <meta name="theme-color" content="#14463D" />
 
   <!-- iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Joy's Diary" />
   <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
@@ -189,11 +189,19 @@
 
     <nav id="tab-bar">
       <button class="tab-btn active" data-tab="today">
-        <span class="tab-icon">📅</span>
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="6" width="18" height="15" rx="2.5"/>
+          <line x1="3" y1="11" x2="21" y2="11"/>
+          <line x1="8" y1="3" x2="8" y2="7"/>
+          <line x1="16" y1="3" x2="16" y2="7"/>
+        </svg>
         Today
       </button>
       <button class="tab-btn" data-tab="info">
-        <span class="tab-icon">📖</span>
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 5 C 6 4 9 4 12 6 C 15 4 18 4 21 5 V 19 C 18 18 15 18 12 20 C 9 18 6 18 3 19 V 5 Z"/>
+          <line x1="12" y1="6" x2="12" y2="20"/>
+        </svg>
         About Joy
       </button>
     </nav>
