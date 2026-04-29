@@ -498,6 +498,37 @@ header::before {
   margin: 0;
 }
 
+/* ─── Info section image gallery ───────────── */
+
+.info-gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 4px 18px 18px;
+}
+
+.info-gallery-item {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-gallery-item img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  background: var(--color-bg);
+}
+
+.info-gallery-item figcaption {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  margin-top: 6px;
+}
+
 /* ─── Tablet breakpoint ──────────────────── */
 
 @media (min-width: 768px) {
