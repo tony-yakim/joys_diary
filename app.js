@@ -139,6 +139,10 @@ function buildCard(item, doneIds) {
   const card = document.createElement('div');
   card.className = 'card' + (done ? ' done' : '');
   card.id = 'card-' + item.id;
+  card.setAttribute('role', 'button');
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('aria-label', `Toggle ${item.label} done`);
+  card.setAttribute('aria-pressed', done ? 'true' : 'false');
   card.innerHTML = `
     <div class="card-emoji">${item.emoji}</div>
     <div class="card-body">
@@ -147,15 +151,24 @@ function buildCard(item, doneIds) {
       <div class="card-meta">${item.time}${item.meta ? ' · ' + item.meta : ''}</div>
     </div>
     <div class="card-actions">
-      <button class="check-btn${done ? ' checked' : ''}" data-id="${item.id}" aria-label="Mark done">✓</button>
+      <div class="check-indicator${done ? ' checked' : ''}" aria-hidden="true">✓</div>
     </div>
   `;
 
-  card.querySelector('.check-btn').addEventListener('click', () => {
+  function toggle() {
     const nowDone = toggleDone(item.id);
     card.classList.toggle('done', nowDone);
-    card.querySelector('.check-btn').classList.toggle('checked', nowDone);
+    card.querySelector('.check-indicator').classList.toggle('checked', nowDone);
+    card.setAttribute('aria-pressed', nowDone ? 'true' : 'false');
     updateProgress();
+  }
+
+  card.addEventListener('click', toggle);
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggle();
+    }
   });
 
   return card;

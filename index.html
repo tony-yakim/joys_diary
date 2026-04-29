@@ -30,20 +30,22 @@
       </div>
     </header>
 
-    <div id="notif-banner">
-      <span>Enable reminders to get notified when it's time for Joy's schedule.</span>
-      <button id="enable-notif-btn">Enable</button>
-    </div>
-
     <div id="content">
+
+      <div id="notif-banner">
+        <span>Enable reminders to get notified when it's time for Joy's schedule.</span>
+        <button id="enable-notif-btn">Enable</button>
+      </div>
 
       <!-- Today timeline -->
       <section id="section-today" class="section active">
-        <p class="section-title">Today</p>
-        <div class="progress-bar-wrap">
-          <div class="progress-bar" id="today-progress" style="width:0%"></div>
+        <div class="today-sticky">
+          <p class="section-title">Today</p>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" id="today-progress" style="width:0%"></div>
+          </div>
+          <p class="progress-label" id="today-progress-label">0 of 10 done</p>
         </div>
-        <p class="progress-label" id="today-progress-label">0 of 10 done</p>
         <div class="timeline" id="timeline"></div>
       </section>
 
