@@ -203,6 +203,24 @@
 
   </div><!-- #app -->
 
+  <!-- Thank you overlay (shown when all tasks for the day are complete) -->
+  <div id="thanks-overlay" class="hidden" aria-hidden="true">
+    <div class="thanks-card" role="dialog" aria-labelledby="thanks-title">
+      <div class="thanks-confetti" aria-hidden="true">
+        <span>🐾</span><span>💛</span><span>🦴</span><span>🐾</span>
+        <span>✨</span><span>💛</span><span>🐾</span><span>🦴</span>
+      </div>
+      <div class="thanks-avatar">
+        <img src="/icons/joy.jpg" alt="Joy" />
+        <div class="thanks-heart" aria-hidden="true">💛</div>
+      </div>
+      <h2 id="thanks-title" class="thanks-title">Thank you for taking care of Joy!</h2>
+      <p class="thanks-body" id="thanks-body">All tasks done today — Joy is happy, well-fed, and loved.</p>
+      <div class="thanks-paws" aria-hidden="true">🐾 🐾 🐾</div>
+      <button class="thanks-action" id="thanks-close-btn">You're a good human</button>
+    </div>
+  </div>
+
   <!-- Onboarding overlay -->
   <div id="onboarding-overlay" class="hidden" aria-hidden="true">
     <div class="onboarding-card" role="dialog" aria-labelledby="onboarding-title">
