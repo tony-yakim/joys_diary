@@ -1,8 +1,8 @@
 // ─── Config ──────────────────────────────────────────────────────────────────
 // Paste these after deploying the Cloudflare Worker.
 
-const VAPID_PUBLIC_KEY = '';   // e.g. 'BNbxGY...'
-const API_URL          = '';   // e.g. 'https://joys-diary.vercel.app'
+const VAPID_PUBLIC_KEY = 'BGT2JpPfd8prxgKpFS44m1Jd_HkPk0177eaOs1ekuUsjDcOPT2d-pNyPb1ey0m_TSKvXKBKENDZ46CRmLlm1lGI';
+const API_URL          = 'https://joys-diary.vercel.app';
 
 // ─── Dog profile ─────────────────────────────────────────────────────────────
 
