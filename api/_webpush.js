@@ -19,6 +19,7 @@ export async function sendWebPush(subscription, payload) {
       'Content-Type':     'application/octet-stream',
       'Content-Length':   String(body.byteLength),
       'TTL':              '60',
+      'Urgency':          'high',
       'Authorization':    `vapid t=${jwt}, k=${VAPID_PUBLIC_KEY}`,
     },
     body,

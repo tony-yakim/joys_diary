@@ -1,6 +1,6 @@
 // Joy's Diary — Web Push backend.
 // Cron tick every minute → checks current time in Europe/Madrid → sends a Web
-// Push notification to the saved subscription if any schedule item matches.
+// Push notification to every saved subscription if any schedule item matches.
 //
 // All crypto uses native crypto.subtle. No npm runtime deps.
 
@@ -34,29 +34,53 @@ export default {
 
     if (req.method === 'POST' && url.pathname === '/subscribe') {
       const sub = await req.json();
-      await env.JOY_SUBS.put('primary', JSON.stringify(sub));
-      return new Response('ok', { headers: corsHeaders() });
+      if (!sub || !sub.endpoint) {
+        return new Response('invalid subscription', { status: 400, headers: corsHeaders() });
+      }
+      const subs = await loadSubs(env);
+      const deduped = subs.filter(s => s.endpoint !== sub.endpoint);
+      deduped.push(sub);
+      await saveSubs(env, deduped);
+      return new Response(JSON.stringify({ ok: true, total: deduped.length }), {
+        headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+      });
     }
 
     if (req.method === 'POST' && url.pathname === '/test') {
-      // Manual test endpoint — sends a push immediately to the saved sub.
-      const sub = JSON.parse((await env.JOY_SUBS.get('primary')) || 'null');
-      if (!sub) return new Response('no subscription', { status: 404, headers: corsHeaders() });
-      const r = await sendWebPush(sub, {
-        title: '🐾 Test from Joy\'s Diary',
-        body:  'Push notifications are working!',
-        tag:   'test',
-      }, env);
-      return new Response('sent: ' + r.status, { headers: corsHeaders() });
+      // Manual test endpoint — sends a push immediately to every saved sub.
+      const subs = await loadSubs(env);
+      if (subs.length === 0) {
+        return new Response('no subscriptions', { status: 404, headers: corsHeaders() });
+      }
+      const results = [];
+      const stillValid = [];
+      for (const sub of subs) {
+        try {
+          const r = await sendWebPush(sub, {
+            title: '🐾 Test from Joy\'s Diary',
+            body:  'Push notifications are working!',
+            tag:   'test',
+          }, env);
+          results.push(r.status);
+          if (r.status !== 404 && r.status !== 410) stillValid.push(sub);
+        } catch (err) {
+          results.push('err: ' + err.message);
+          stillValid.push(sub);
+        }
+      }
+      if (stillValid.length !== subs.length) await saveSubs(env, stillValid);
+      return new Response(JSON.stringify({ devices: subs.length, results }), {
+        headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+      });
     }
 
     return new Response('Joy push worker', { headers: corsHeaders() });
   },
 
   async scheduled(event, env, ctx) {
-    const sub = JSON.parse((await env.JOY_SUBS.get('primary')) || 'null');
-    if (!sub) {
-      console.log('No subscription saved — skipping cron tick.');
+    const subs = await loadSubs(env);
+    if (subs.length === 0) {
+      console.log('No subscriptions saved — skipping cron tick.');
       return;
     }
 
@@ -68,22 +92,49 @@ export default {
     const due = SCHEDULE.filter(i => i.time === nowHHMM);
     if (due.length === 0) return;
 
-    console.log(`[${nowHHMM} ${TZ}] sending ${due.length} push(es): ${due.map(i => i.id).join(',')}`);
+    console.log(`[${nowHHMM} ${TZ}] sending ${due.length} push(es) to ${subs.length} device(s): ${due.map(i => i.id).join(',')}`);
 
-    for (const item of due) {
-      try {
-        const r = await sendWebPush(sub, {
-          title: `${item.emoji} ${item.label}`,
-          body:  item.meta,
-          tag:   item.id,
-        }, env);
-        console.log(`  ${item.id} → ${r.status}`);
-      } catch (err) {
-        console.error(`  ${item.id} failed:`, err.message);
+    const stillValid = [];
+    for (const sub of subs) {
+      let keep = true;
+      for (const item of due) {
+        try {
+          const r = await sendWebPush(sub, {
+            title: `${item.emoji} ${item.label}`,
+            body:  item.meta,
+            tag:   item.id,
+          }, env);
+          console.log(`  ${item.id} → ${r.status}`);
+          // 404 Not Found / 410 Gone means the subscription is dead.
+          if (r.status === 404 || r.status === 410) keep = false;
+        } catch (err) {
+          console.error(`  ${item.id} failed:`, err.message);
+        }
       }
+      if (keep) stillValid.push(sub);
+    }
+
+    if (stillValid.length !== subs.length) {
+      await saveSubs(env, stillValid);
+      console.log(`Pruned ${subs.length - stillValid.length} dead subscription(s).`);
     }
   },
 };
+
+async function loadSubs(env) {
+  const raw = await env.JOY_SUBS.get('subs');
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+async function saveSubs(env, subs) {
+  await env.JOY_SUBS.put('subs', JSON.stringify(subs));
+}
 
 function corsHeaders() {
   return {
@@ -108,7 +159,9 @@ async function sendWebPush(subscription, payload, env) {
   // 2. Encrypt payload
   const body = await encryptAes128Gcm(plaintext, clientP256, clientAuth);
 
-  // 3. POST to push service
+  // 3. POST to push service.
+  // Urgency: high asks the push service (and Android FCM in particular) to
+  // wake the device from Doze rather than batching the message.
   return fetch(endpoint, {
     method: 'POST',
     headers: {
@@ -116,6 +169,7 @@ async function sendWebPush(subscription, payload, env) {
       'Content-Type':     'application/octet-stream',
       'Content-Length':   String(body.byteLength),
       'TTL':              '60',
+      'Urgency':          'high',
       'Authorization':    `vapid t=${jwt}, k=${env.VAPID_PUBLIC_KEY}`,
     },
     body,
