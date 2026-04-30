@@ -14,11 +14,11 @@ const DOG = {
 
 const SCHEDULE = {
   feeding: [
-    { id: 'f6', label: 'Weigh daily dry food',   time: '08:45', emoji: '⚖️', meta: 'Weigh 90g of dry food into the cup — covers all 3 meals (after morning walk, before breakfast)' },
+    { id: 'f6', label: 'Weigh daily dry food',   time: '08:45', emoji: '⚖️', meta: 'Weigh 90g of dry food into the cup — covers all 3 meals' },
     { id: 'f1', label: 'Breakfast',              time: '09:00', emoji: '🍖', meta: '30g dry food + wet food (after morning walk)' },
     { id: 'f2', label: 'Lunch',                  time: '14:00', emoji: '🍖', meta: '30g dry food + 2 pumps salmon oil' },
-    { id: 'f3', label: 'Dinner',                 time: '20:00', emoji: '🍖', meta: '30g dry food + salmon oil (before last walk)' },
-    { id: 'f4', label: 'Refill water bowl',      time: '09:30', emoji: '💧', meta: 'Rinse & refill with fresh water (2× daily)' },
+    { id: 'f3', label: 'Dinner',                 time: '20:00', emoji: '🍖', meta: '30g dry food + salmon oil ' },
+    { id: 'f4', label: 'Refill water bowl',      time: '09:30', emoji: '💧', meta: 'Rinse & refill with fresh water' },
     { id: 'f5', label: 'Afternoon water refill', time: '15:00', emoji: '💧', meta: 'Second refill of the day' },
   ],
   walks: [
@@ -27,8 +27,8 @@ const SCHEDULE = {
     { id: 'w3', label: 'Evening walk',   time: '21:00', emoji: '🦮', meta: '10–15 min hygiene walk before bedtime',        subtitle: 'After: wipe paws · remove harness' },
   ],
   reminders: [
-    { id: 'r4', label: "Wash Joy's bowl", time: '20:45', emoji: '🫧', meta: 'After dinner — brush + boiling water (no detergent)' },
-    { id: 'r5', label: 'Chewing stick',   time: '17:00', emoji: '🦴', meta: 'Once every 1–2 days' },
+    { id: 'r4', label: "Wash Joy's bowl", time: '20:45', emoji: '🫧', meta: 'After dinner — cover with boiling water, wait and clean with brush' },
+    { id: 'r5', label: 'Chewing stick',   time: '17:00', emoji: '🦴', meta: 'Once a day, optional for good behaviour' },
   ],
 };
 
