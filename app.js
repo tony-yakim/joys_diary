@@ -33,8 +33,17 @@ const SCHEDULE = {
 
 // ─── Storage helpers ──────────────────────────────────────────────────────────
 
+// Local YYYY-MM-DD so the day rolls over at the user's midnight, not UTC's.
+function localDateKey() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 function todayKey() {
-  return 'joys_diary_done_' + new Date().toISOString().slice(0, 10);
+  return 'joys_diary_done_' + localDateKey();
 }
 
 function getDoneIds() {
@@ -212,6 +221,8 @@ const DIVIDER_LABELS = {
   evening:   '🌙 Evening',
 };
 
+let renderedDateKey = null;
+
 function renderTimeline() {
   const container = document.getElementById('timeline');
   container.innerHTML = '';
@@ -228,7 +239,27 @@ function renderTimeline() {
     }
     container.appendChild(buildCard(item, doneIds));
   }
+  renderedDateKey = localDateKey();
   updateProgress();
+}
+
+// If the local date has changed since we last rendered, redraw so checks reset.
+function checkDayRollover() {
+  if (renderedDateKey && renderedDateKey !== localDateKey()) {
+    renderTimeline();
+  }
+}
+
+// Schedule a re-render shortly after the next local midnight, then loop.
+function scheduleMidnightRollover() {
+  const now = new Date();
+  const next = new Date(
+    now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 1, 0,
+  );
+  setTimeout(() => {
+    checkDayRollover();
+    scheduleMidnightRollover();
+  }, next.getTime() - now.getTime());
 }
 
 function updateProgress() {
@@ -248,7 +279,7 @@ function updateProgress() {
 // ─── Thank you overlay ────────────────────────────────────────────────────────
 
 function thanksKey() {
-  return 'joys_diary_thanks_shown_' + new Date().toISOString().slice(0, 10);
+  return 'joys_diary_thanks_shown_' + localDateKey();
 }
 
 function wasThanksShownToday() {
@@ -310,4 +341,8 @@ document.addEventListener('DOMContentLoaded', () => {
   renderTimeline();
   initTabs();
   initOnboarding();
+  scheduleMidnightRollover();
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) checkDayRollover();
+  });
 });
