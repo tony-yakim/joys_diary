@@ -378,12 +378,49 @@ function initTabs() {
   });
 }
 
+// ─── Header shrink on scroll ──────────────────────────────────────────────────
+
+function initHeaderShrink() {
+  const content = document.getElementById('content');
+  const header  = document.querySelector('header');
+  if (!content || !header) return;
+
+  // Hysteresis: collapse past EXPAND, expand back below COLLAPSE.
+  // Prevents flicker when the rest position lands near the threshold.
+  const COLLAPSE = 8;
+  const EXPAND   = 24;
+  let minimized = false;
+  let ticking = false;
+
+  function apply() {
+    ticking = false;
+    const y = content.scrollTop;
+    if (!minimized && y > EXPAND) {
+      minimized = true;
+      header.classList.add('minimized');
+    } else if (minimized && y < COLLAPSE) {
+      minimized = false;
+      header.classList.remove('minimized');
+    }
+  }
+
+  content.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(apply);
+    }
+  }, { passive: true });
+
+  apply();
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
   initThanks();
   renderTimeline();
   initTabs();
+  initHeaderShrink();
   initOnboarding();
   scheduleMidnightRollover();
   document.addEventListener('visibilitychange', () => {

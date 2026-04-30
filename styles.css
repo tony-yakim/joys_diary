@@ -83,6 +83,12 @@ header {
   padding-top: calc(24px + env(safe-area-inset-top));
   flex-shrink: 0;
   overflow: hidden;
+  transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+header.minimized {
+  padding: 10px 22px 22px;
+  padding-top: calc(8px + env(safe-area-inset-top));
 }
 
 header::before {
@@ -94,6 +100,11 @@ header::before {
   height: 220px;
   background: radial-gradient(circle, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 70%);
   pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+header.minimized::before {
+  opacity: 0.5;
 }
 
 .dog-profile {
@@ -102,6 +113,11 @@ header::before {
   gap: 16px;
   position: relative;
   z-index: 1;
+  transition: gap 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+header.minimized .dog-profile {
+  gap: 12px;
 }
 
 .dog-avatar {
@@ -113,6 +129,16 @@ header::before {
   flex-shrink: 0;
   border: 2.5px solid rgba(255,255,255,0.85);
   box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  transition:
+    width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+header.minimized .dog-avatar {
+  width: 40px;
+  height: 40px;
+  border-width: 2px;
 }
 
 .dog-avatar img {
@@ -122,16 +148,37 @@ header::before {
   display: block;
 }
 
+.dog-info {
+  min-width: 0;
+}
+
 .dog-info h1 {
   font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.4px;
+  transition: font-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+header.minimized .dog-info h1 {
+  font-size: 17px;
 }
 
 .dog-info p {
   font-size: 14px;
   opacity: 0.9;
   margin-top: 2px;
+  max-height: 24px;
+  overflow: hidden;
+  transition:
+    opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    margin-top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+header.minimized .dog-info p {
+  opacity: 0;
+  max-height: 0;
+  margin-top: 0;
 }
 
 /* ─── Tab Bar ────────────────────────────── */
