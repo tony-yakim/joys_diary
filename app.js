@@ -14,6 +14,7 @@ const DOG = {
 
 const SCHEDULE = {
   feeding: [
+    { id: 'f6', label: 'Weigh daily dry food',   time: '08:45', emoji: '⚖️', meta: 'Weigh 90g of dry food into the cup — covers all 3 meals (after morning walk, before breakfast)' },
     { id: 'f1', label: 'Breakfast',              time: '09:00', emoji: '🍖', meta: '30g dry food + wet food (after morning walk)' },
     { id: 'f2', label: 'Lunch',                  time: '14:00', emoji: '🍖', meta: '30g dry food + 2 pumps salmon oil' },
     { id: 'f3', label: 'Dinner',                 time: '20:00', emoji: '🍖', meta: '30g dry food + salmon oil (before last walk)' },
