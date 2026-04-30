@@ -104,6 +104,25 @@ async function subscribeToPush() {
 
 // ─── Onboarding overlay ───────────────────────────────────────────────────────
 
+// Captured `beforeinstallprompt` event on Android Chrome / Edge / Samsung
+// Internet. The browser fires this when the PWA is installable; we stash the
+// event so the user can trigger the install dialog from our own button.
+let deferredInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const btn = document.getElementById('onboarding-install-btn');
+  const iosSteps = document.getElementById('onboarding-ios-steps');
+  if (btn) btn.style.display = '';
+  // Hide the iOS-Safari instructions — they don't apply on Android.
+  if (iosSteps) iosSteps.style.display = 'none';
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+});
+
 function isInstalledPwa() {
   return window.matchMedia('(display-mode: standalone)').matches
       || window.navigator.standalone === true;
@@ -121,6 +140,7 @@ function initOnboarding() {
   const overlay = document.getElementById('onboarding-overlay');
   const enableBtn = document.getElementById('onboarding-enable-btn');
   const skipBtn   = document.getElementById('onboarding-skip-btn');
+  const installBtn = document.getElementById('onboarding-install-btn');
 
   function hide() {
     overlay.classList.add('hidden');
@@ -156,6 +176,29 @@ function initOnboarding() {
       console.error('Permission request failed:', err);
     }
   });
+
+  if (installBtn) {
+    // beforeinstallprompt may have fired before this handler ran (e.g. if the
+    // browser is fast). If we already have the deferred event, reveal the
+    // button now and hide the iOS-only fallback steps.
+    if (deferredInstallPrompt) {
+      installBtn.style.display = '';
+      const iosSteps = document.getElementById('onboarding-ios-steps');
+      if (iosSteps) iosSteps.style.display = 'none';
+    }
+    installBtn.addEventListener('click', async () => {
+      if (!deferredInstallPrompt) return;
+      try {
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+      } catch (err) {
+        console.error('Install prompt failed:', err);
+      } finally {
+        deferredInstallPrompt = null;
+        installBtn.style.display = 'none';
+      }
+    });
+  }
 
   skipBtn.addEventListener('click', hide);
 }

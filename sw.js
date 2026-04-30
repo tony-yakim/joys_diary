@@ -1,4 +1,4 @@
-const CACHE = 'joys-diary-v15';
+const CACHE = 'joys-diary-v16';
 const ASSETS = [
   '/',
   '/index.html',
@@ -41,6 +41,13 @@ self.addEventListener('push', e => {
     icon:  '/icons/icon-192.png',
     badge: '/icons/icon-192.png',
     tag:   data.tag   || 'joy',
+    // Vibration is honoured on Android Chrome / Samsung Internet; ignored
+    // elsewhere. Pattern: buzz, pause, buzz.
+    vibrate: [200, 100, 200],
+    // Keep the reminder in the tray until the caretaker dismisses it,
+    // so a missed walk or meal isn't auto-cleared.
+    requireInteraction: true,
+    renotify: true,
     data,
   };
   e.waitUntil(self.registration.showNotification(title, opts));
