@@ -10,7 +10,9 @@
   --color-text-muted: #8C7B6E;
   --color-border: #EDE0D4;
   --color-done: #6BBF6B;
-  --color-tab-bar: #FFFFFF;
+  --color-tab-bar: rgba(255, 255, 255, 0.55);
+  --color-tab-bar-border: rgba(255, 255, 255, 0.55);
+  --color-tab-bar-shadow: 0 10px 30px rgba(20, 70, 61, 0.18), 0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.7);
   --color-emergency-bg: #FFF1EC;
   --color-emergency-border: #F2B79A;
   --color-emergency-title: #B14A1A;
@@ -35,7 +37,9 @@
     --color-text-muted: #A89687;
     --color-border: #3A2F26;
     --color-done: #5FA85F;
-    --color-tab-bar: #26201B;
+    --color-tab-bar: rgba(38, 32, 27, 0.55);
+    --color-tab-bar-border: rgba(255, 255, 255, 0.08);
+    --color-tab-bar-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
     --color-emergency-bg: #3A2520;
     --color-emergency-border: #6B3F2A;
     --color-emergency-title: #F2A87A;
@@ -181,42 +185,61 @@ header.minimized .dog-info p {
   margin-top: 0;
 }
 
-/* ─── Tab Bar ────────────────────────────── */
+/* ─── Tab Bar (floating glass pill) ──────── */
 
 #tab-bar {
+  position: fixed;
+  left: 50%;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
   display: flex;
+  gap: 4px;
+  padding: 6px;
   background: var(--color-tab-bar);
-  box-shadow: 0 -1px 6px rgba(0,0,0,0.06);
-  padding-bottom: env(safe-area-inset-bottom);
-  flex-shrink: 0;
-  order: 99;
+  border: 1px solid var(--color-tab-bar-border);
+  border-radius: 999px;
+  box-shadow: var(--color-tab-bar-shadow);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  z-index: 50;
 }
 
 .tab-btn {
-  flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 14px 4px 10px;
+  gap: 7px;
+  padding: 10px 18px;
   border: none;
-  background: none;
+  background: transparent;
+  border-radius: 999px;
   cursor: pointer;
   color: var(--color-text-muted);
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   letter-spacing: 0.1px;
-  transition: color 0.15s;
+  transition: color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, transform 0.08s ease;
+}
+
+.tab-btn:active {
+  transform: scale(0.96);
 }
 
 .tab-btn .tab-icon {
-  width: 24px;
-  height: 24px;
-  transition: color 0.15s;
+  width: 20px;
+  height: 20px;
+  transition: color 0.2s ease;
 }
 
 .tab-btn.active {
-  color: var(--color-primary);
+  color: #FFFFFF;
+  background: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(232, 135, 74, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  .tab-btn.active {
+    box-shadow: 0 4px 14px rgba(232, 135, 74, 0.45);
+  }
 }
 
 /* ─── Content sheet (rounded top corners) ─── */
@@ -225,7 +248,7 @@ header.minimized .dog-info p {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 0 16px 24px;
+  padding: 0 16px calc(96px + env(safe-area-inset-bottom));
   margin-top: -22px;
   background: var(--color-bg);
   border-radius: 24px 24px 0 0;
