@@ -2,7 +2,7 @@
 
 A daily-care PWA for Joy the dog — schedule, reminders, and a little gratitude when the day's done.
 
-<p align="center"><img src="icons/joy.jpg" alt="Joy" width="160" /></p>
+<p align="center"><img src="icons/icon-512.png" alt="Joy" width="160" /></p>
 
 ---
 
